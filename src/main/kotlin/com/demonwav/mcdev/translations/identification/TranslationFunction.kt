@@ -25,17 +25,16 @@ import com.intellij.psi.PsiLiteral
 import com.intellij.psi.PsiMethod
 
 class TranslationFunction(
-    private val memberReference: MemberReference,
-    val matchedIndex: Int, val formatting: Boolean, val setter: Boolean = false,
-    val foldParameters: Boolean = false, val prefix: String = "", val suffix: String = "",
-    val obfuscatedName: Boolean = false
+    val member: MemberReference, private val srgName: Boolean = false, val paramIndex: Int,
+    private val keyPrefix: String = "", private val keySuffix: String = "",
+    val formatting: Boolean, val foldParametersOnly: Boolean = false
 ) {
     private fun getMethod(context: PsiElement): PsiMethod? {
-        var reference = memberReference
-        if (obfuscatedName) {
+        var reference = member
+        if (srgName) {
             val moduleSrgManager = context.findMcpModule()?.srgManager
             val srgManager = moduleSrgManager ?: SrgManager.findAnyInstance(context.project)
-            srgManager?.srgMapNow?.mapToMcpMethod(memberReference)?.let {
+            srgManager?.srgMapNow?.mapToMcpMethod(member)?.let {
                 reference = it
             }
         }
@@ -45,19 +44,19 @@ class TranslationFunction(
     fun matches(call: PsiCall, paramIndex: Int): Boolean {
         val referenceMethod = getMethod(call) ?: return false
         val method = call.resolveMethod() ?: return false
-        return method.isSameReference(referenceMethod) && paramIndex == matchedIndex
+        return method.isSameReference(referenceMethod) && paramIndex == this.paramIndex
     }
 
     fun getTranslationKey(call: PsiCall, param: PsiElement): TranslationInstance.Key? {
-        if (!matches(call, matchedIndex)) {
+        if (!matches(call, paramIndex)) {
             return null
         }
         val value = ((param as? PsiLiteral)?.value as? String) ?: return null
-        return TranslationInstance.Key(prefix, value, suffix)
+        return TranslationInstance.Key(keyPrefix, value, keySuffix)
     }
 
     fun format(translation: String, call: PsiCall): Pair<String, Int>? {
-        if (!matches(call, matchedIndex)) {
+        if (!matches(call, paramIndex)) {
             return null
         }
         if (!formatting) {
@@ -74,7 +73,7 @@ class TranslationFunction(
     }
 
     override fun toString(): String {
-        return "$memberReference@$matchedIndex"
+        return "$member@$paramIndex"
     }
 
     companion object {
