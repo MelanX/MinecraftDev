@@ -85,6 +85,11 @@
                              groupId="language"
                              parentId="Settings.Minecraft"
                              instance="com.demonwav.mcdev.translations.sorting.TranslationTemplateConfigurable"/>
+        <projectConfigurable displayName="Translation Functions"
+                             id="Settings.Minecraft.TranslationFunctions"
+                             groupId="language"
+                             parentId="Settings.Minecraft"
+                             instance="com.demonwav.mcdev.translations.identification.TranslationFunctionConfigurable"/>
 
         <!-- NBT -->
         <fileTypeFactory implementation="com.demonwav.mcdev.nbt.filetype.NbtFileTypeFactory"/>

@@ -10,13 +10,10 @@
 
 package com.demonwav.mcdev.translations.identification
 
-import com.demonwav.mcdev.facet.MinecraftFacet
-import com.demonwav.mcdev.platform.mcp.McpModuleType
 import com.demonwav.mcdev.platform.mcp.srg.SrgManager
 import com.demonwav.mcdev.util.MemberReference
 import com.demonwav.mcdev.util.extractVarArgs
 import com.demonwav.mcdev.util.findMcpModule
-import com.demonwav.mcdev.util.findModule
 import com.demonwav.mcdev.util.isSameReference
 import com.demonwav.mcdev.util.referencedMethod
 import com.intellij.psi.PsiCall
@@ -24,10 +21,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLiteral
 import com.intellij.psi.PsiMethod
 
-class TranslationFunction(
-    val member: MemberReference, private val srgName: Boolean = false, val paramIndex: Int,
-    private val keyPrefix: String = "", private val keySuffix: String = "",
-    val formatting: Boolean, val foldParametersOnly: Boolean = false
+data class TranslationFunction(
+    val member: MemberReference, val srgName: Boolean, val paramIndex: Int,
+    val keyPrefix: String, val keySuffix: String,
+    val formatting: Boolean, val foldParametersOnly: Boolean
 ) {
     private fun getMethod(context: PsiElement): PsiMethod? {
         var reference = member
